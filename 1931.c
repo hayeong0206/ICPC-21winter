@@ -6,6 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct time{
+    int in;
+    int out;
+}Time;
+
 //퀵정렬 - 최악의 경우 n^2의 시간복잡도를 가질 수 있음...
 
 /*void Swap(int arr[], int a, int b) // a,b 스왑 함수 
@@ -53,31 +58,103 @@ void QuickSort(int arr[], int arr2[], int left, int right)
     }
 }*/
 
+//병합 정렬 - 시간복잡도는 확실하게 O(nlog(n))을 만족하지만 메모리활용 비효율적
+//메모리 초과로 실패
+/*void merge(Time *time, int start, int middle, int end){
+	int i = start;
+	int j = middle + 1;
+	int k = start;
+    Time *temp_arr=(Time *)malloc(sizeof(Time)* (end+1));
+	
+	//비교하여 데이터정렬 및 삽입
+	while(i<=middle && j<=end){
+		if(time[i].out<=time[j].out) {
+            temp_arr[k] = time[i++];
+        }
+		else if(time[i].out>time[j].out) {
+            temp_arr[k] = time[j++];
+        }
+		k++;
+	}
+	
+	//남은 데이터 삽입
+	if(i>middle){
+		for(int t=j;t<=end;++t){
+			temp_arr[k] = time[t];
+			++k;
+		}
+	}
+	else{
+		for(int t=i;t<=middle;++t){
+			temp_arr[k] = time[t];
+			++k;
+		}
+	}
+	
+	//임시 저장용 배열에 저장된 값을 원래 배열에 넣어줌
+	for(int t=start;t<=end;++t){
+		time[t] = temp_arr[t];
+	}
+
+    free(temp_arr);
+}
+
+
+void mergeSort(Time *arr, int start, int end){
+	//크기가 1 일대 까지 호출, 1단위 까지 쪼갬
+	if(start < end){
+		int middle = (start + end) / 2;
+		mergeSort(arr, start, middle);
+		mergeSort(arr, middle+1, end);
+		//다시 병합
+		//merge(arr, start, middle, end);
+        merge(arr,start, middle, end);
+	}
+}*/
+
+int static compare (const void* first, const void* second){
+    Time *timeA = ((Time *)first);
+    Time *timeB = ((Time *)second);
+    if(timeA->out<timeB->out) return -1 ;
+    else if(timeA->out>timeB->out) return 1;
+    else return 0;
+}
+
+
 
 int main(){
-    int n, timein[100001]={0},timeout[100001]= {0};
+    int n;
     int i,a=0, b=0;
-    
+
     scanf("%d",&n);
+    
+    Time *time=(Time *)malloc(sizeof(Time)*n);
+    
     for(i = 0; i<n; i++){
-        scanf("%d %d",&timein[i],&timeout[i]);
+        scanf("%d %d",&time[i].in,&time[i].out);
     }
+    //printf("\n");
     //퀵소트를 이용해 오름차순 정렬
-    QuickSort(timeout,timein, 0, n-1);
+    //QuickSort(timeout,timein, 0, n-1);
+    //mergeSort(time, 0,n-1);
+
+    qsort(time,n,sizeof(Time),compare);
 
     /*for(i=0; i<n;i++){
-        printf("%d %d\n", timeout[i],timein[i]);
+        printf("%d %d\n", time[i].out,time[i].in);
     }*/
 
     for (i=0; i<n; i++){
-        if(timein[i]<a) continue;
+        if(time[i].in<a) continue;
+        if(time[i].out==time[i+1].out&&time[i].in>=time[i].in) b++;
         else{
-            a = timeout[i];
+            a = time[i].out;
             b++;
         }
         //printf("a: %d b: %d\n", a, b);
     }
 
     printf("%d",b);
+    free(time);
     return 0;
 }
