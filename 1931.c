@@ -6,13 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct time{
-    int in;
-    int out;
+typedef struct _time {
+    unsigned int in;
+    unsigned int out;
 }Time;
 
 //퀵정렬 - 최악의 경우 n^2의 시간복잡도를 가질 수 있음...
-
 /*void Swap(int arr[], int a, int b) // a,b 스왑 함수 
 {
     int temp = arr[a];
@@ -120,6 +119,21 @@ int static compare (const void* first, const void* second){
     else return 0;
 }
 
+/*int static compare (const void* first, const void* second){
+    unsigned int *timeA = (Time *)first;
+    unsigned int *timeB = (*(Time **)second)->out;
+    if(timeA<timeB) return -1 ;
+    else if(timeA>timeB) return 1;
+    else return 0;
+}*/
+
+int static compare2 (const void* first, const void* second){
+    Time *timeA = ((Time *)first);
+    Time *timeB = ((Time *)second);
+    if(timeA->in<timeB->in) return -1 ;
+    else if(timeA->in>timeB->in) return 1;
+    else return 0;
+}
 
 
 int main(){
@@ -138,20 +152,27 @@ int main(){
     //QuickSort(timeout,timein, 0, n-1);
     //mergeSort(time, 0,n-1);
 
-    qsort(time,n,sizeof(Time),compare);
 
-    /*for(i=0; i<n;i++){
-        printf("%d %d\n", time[i].out,time[i].in);
-    }*/
+    //라이브러리 qsort를 이용
+    qsort(time,n,sizeof(time),compare2);
+
+    for(i=0; i<n; i++){
+        if(time[i].in==time[i+1].in) {
+            qsort(time,n,sizeof(time),compare);
+        }
+    } //끝나는 시간이 같은 경우 시작하는 시간 또한 재배열
+
+    for(i=0; i<n;i++){
+        printf("%d %d\n", time[i].in,time[i].out);
+    }
 
     for (i=0; i<n; i++){
         if(time[i].in<a) continue;
-        if(time[i].out==time[i+1].out&&time[i].in>=time[i].in) b++;
         else{
             a = time[i].out;
             b++;
         }
-        //printf("a: %d b: %d\n", a, b);
+        printf("a: %d b: %d\n", a, b);
     }
 
     printf("%d",b);
