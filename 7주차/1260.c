@@ -7,78 +7,51 @@
 
 #include <stdio.h>
 
-int arr[1001][1001] = {-1};
+int arr[1001][1001] = {0};
 int check[1001] = {0};
-int n,m,v,i;
-
-#define MAX 10001
-
-int front=-1;
-int rear=-1;
-int queue[MAX];
- 
-int IsEmpty(void){
-    if(front==rear)//front와 rear가 같으면 큐는 비어있는 상태 
-        return 1;
-    else return 0;
-}
-int IsFull(void){
-    int tmp=(rear+1); //원형 큐에서 rear+1을 MAX로 나눈 나머지값이
-    if(tmp==front)//front와 같으면 큐는 가득차 있는 상태 
-        return 1;
-    else
-        return 0;
-}
-void addq(int value){
-    if(IsFull()==1);
-    else{
-         rear = (rear+1);
-         queue[rear]=value;
-        }
-
-}
-int deleteq(){
-    if(IsEmpty()==1);
-    else{
-        front = (front+1);
-        return queue[front];
-    }
-}
+int n,m,v;
+int queue[1001];
 
 
 void dfs(int x){
-    if(check[x] == 1) return;
-    
+    int i;
     printf("%d ",x);
     check[x] = 1;
 
     for(i=1; i<=n; i++){
-        if(arr[x][i]==1){
+        if(arr[x][i]==1 && check[i]==0){
             dfs(i);
         }
     }
     
 }
 
-void bfs(int x){
-    addq(x);
+void bfs(int x, int n){
+    int front=1, rear=1;
+    int i, pop;
+    printf("%d ", x);
+    queue[1] = x;
+    rear++;
     check[x] = 1;
-    while(1){
-        if(IsEmpty()==1) break;
-        x = queue[front];
-        printf("%d ",queue[front]);
-        deleteq();
-        for(i=1; i<=n; i++){
-            if(check[i] == 0 || arr[x][i] == 1) continue;
-            addq(i);
-            check[i] = 1;
-        }
+    
+    while(front<rear){
+        pop = queue[front];
+        front++;
 
+        for(i=1; i<=n; i++){
+            if(arr[pop][i] == 1 && check[i]==0){
+                printf("%d ",i);
+                queue[rear] = i;
+                rear++;
+                check[i] = 1;
+            }
+        }
     }
+    return;
 }
 
 int main(){
-    int s, t;
+    int i, s, t;
 
     scanf("%d %d %d", &n, &m, &v);
 
@@ -92,5 +65,5 @@ int main(){
         check[i] = 0;
     }
     printf("\n");
-    bfs(v);
+    bfs(v,n);
 }
